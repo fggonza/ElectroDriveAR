@@ -1,0 +1,96 @@
+:root {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --accent: #00f2ff; /* Cian Eléctrico */
+    --accent-secondary: #39ff14; /* Verde Lima */
+    --text-main: #ffffff;
+    --text-dim: #a0a0a0;
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.calculator-card {
+    background: var(--card-bg);
+    width: 100%;
+    max-width: 400px;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.accent { color: var(--accent); }
+.subtitle { color: var(--text-dim); font-size: 0.8rem; margin-top: -10px; }
+
+.config-group { margin-top: 20px; }
+
+.input-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+select {
+    background: #2a2a2a;
+    border: 1px solid var(--accent);
+    color: white;
+    padding: 8px;
+    border-radius: 10px;
+    outline: none;
+}
+
+.range-container { margin-bottom: 20px; }
+
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+.range-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+}
+
+.divider { border: 0; border-top: 1px solid #333; margin: 20px 0; }
+
+.control-box {
+    background: rgba(255,255,255,0.03);
+    padding: 15px;
+    border-radius: 16px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.value-badge {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--accent-secondary);
+}
+
+.result-container {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid var(--accent);
+}
+
+.autonomy-value {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-shadow: 0 0 15px rgba(0,242,255,0.3);
+}
+
+.autonomy-value small { font-size: 1rem; color: var(--text-dim); }

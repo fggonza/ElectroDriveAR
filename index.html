@@ -1,0 +1,49 @@
+<div class="calculator-card">
+<link rel="stylesheet" href="styles.css">
+    <header>
+        <h2>ElectroDrive<span class="accent">AR</span></h2>
+        <p class="subtitle">Simulador de Autonomía Real</p>
+    </header>
+
+    <section class="config-group">
+        <div class="input-row">
+            <label for="car-select">Vehículo:</label>
+            <select id="car-select">
+                <option value="43.2" selected>BYD Dolphin Mini GS (43.2 kWh)</option>
+                <option value="38.5">BYD Dolphin Mini (38.5 kWh)</option>
+                <option value="60.5">BYD Yuan Plus (60.5 kWh)</option>
+                <option value="71.7">BYD Seal (71.7 kWh)</option>
+            </select>
+        </div>
+
+        <div class="range-container">
+            <div class="range-header">
+                <span>Salud de Batería (SOH):</span>
+                <span id="soh-display">100%</span>
+            </div>
+            <input type="range" id="soh-range" min="70" max="100" value="100" step="1">
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <section class="main-controls">
+        <div class="control-box">
+            <label>Nivel de Carga (SOC)</label>
+            <input type="range" id="soc-range" min="0" max="100" value="100">
+            <div class="value-badge"><span id="soc-display">100</span>%</div>
+        </div>
+
+        <div class="control-box">
+            <label>Rendimiento (km/kWh)</label>
+            <input type="range" id="efficiency-range" min="4" max="10" step="0.1" value="7.5">
+            <div class="value-badge"><span id="eff-display">7.5</span> km/kWh</div>
+        </div>
+    </section>
+
+    <footer class="result-container">
+        <div class="autonomy-label">Autonomía Estimada</div>
+        <div class="autonomy-value"><span id="range-display">324</span> <small>km</small></div>
+    </footer>
+<script src="script.js"></script>
+</div>
