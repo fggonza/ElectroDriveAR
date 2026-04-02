@@ -1,44 +1,67 @@
-<div class="calculator-card">
-    <header>
-        <h2>ElectroDrive<span class="accent">AR</span></h2>
-    </header>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#121212">
+    <title>ElectroDriveAR - Calculadora EV</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="calculator-card">
+        <header>
+            <h1>ElectroDrive<span class="accent">AR</span></h1>
+            <p class="subtitle">Herramienta de Simulación Energética</p>
+        </header>
 
-    <section class="config-group">
-        <select id="car-select">
-            <option value="43.2">BYD Dolphin Mini GS (43.2 kWh)</option>
-            <option value="60.5">BYD Yuan Plus (60.5 kWh)</option>
-        </select>
-        <div class="range-header"><span>Salud Batería (SOH): <b id="soh-display">100%</b></span></div>
-        <input type="range" id="soh-range" min="70" max="100" value="100">
-    </section>
+        <section class="section-group">
+            <div class="row">
+                <label>Vehículo</label>
+                <select id="car-select">
+                    <option value="43.2">BYD Dolphin Mini GS (43.2 kWh)</option>
+                    <option value="38.5">BYD Dolphin Mini (38.5 kWh)</option>
+                    <option value="60.5">BYD Yuan Plus (60.5 kWh)</option>
+                    <option value="71.7">BYD Seal (71.7 kWh)</option>
+                </select>
+            </div>
+            <div class="range-info">
+                <span>Salud Batería (SOH): <b id="soh-val">100%</b></span>
+            </div>
+            <input type="range" id="soh-range" min="70" max="100" value="100">
+        </section>
 
-    <hr class="divider">
+        <hr class="divider">
 
-    <section class="control-box">
-        <label>Tramo de Batería (Inicio - Fin)</label>
-        <div class="double-slider-container">
-            <div class="slider-track"></div>
-            <input type="range" id="soc-start" min="0" max="100" value="20">
-            <input type="range" id="soc-end" min="0" max="100" value="100">
-        </div>
-        <div class="value-badge">Uso: <span id="soc-range-display">20% - 100%</span> (<span id="soc-delta">80</span>%)</div>
-    </section>
+        <section class="control-box">
+            <label>Tramo de Batería (SOC %)</label>
+            <div class="double-slider-wrapper">
+                <div class="slider-track" id="track"></div>
+                <input type="range" id="soc-start" min="0" max="100" value="20" class="thumb-start">
+                <input type="range" id="soc-end" min="0" max="100" value="100" class="thumb-end">
+            </div>
+            <div class="badge">Uso: <span id="soc-range-text">20% - 100%</span> (<span id="soc-delta">80</span>%)</div>
+        </section>
 
-    <section class="control-box">
-        <label>Rendimiento</label>
-        <div class="preset-buttons">
-            <button onclick="setEff(9.0)">Ciudad</button>
-            <button onclick="setEff(7.5)">Mixto</button>
-            <button onclick="setEff(6.0)">Ruta</button>
-            <button onclick="setEff(5.0)">Autopista</button>
-        </div>
-        <input type="range" id="eff-range" min="3" max="12" step="0.1" value="7.5">
-        <div class="value-badge"><span id="eff-display">7.5</span> km/kWh</div>
-    </section>
+        <section class="control-box">
+            <label>Rendimiento (Consumo)</label>
+            <div class="preset-grid">
+                <button type="button" onclick="setEff(9.5)">Ciudad</button>
+                <button type="button" onclick="setEff(7.5)">Mixto</button>
+                <button type="button" onclick="setEff(6.0)">Ruta</button>
+                <button type="button" onclick="setEff(4.8)">Autopista</button>
+            </div>
+            <input type="range" id="eff-range" min="3" max="12" step="0.1" value="7.5">
+            <div class="badge"><span id="eff-val">7.5</span> km/kWh</div>
+        </section>
 
-    <section class="control-box highlight">
-        <label>Autonomía Objetivo (km)</label>
-        <input type="range" id="range-slider" min="0" max="600" value="300">
-        <div class="autonomy-value"><span id="range-display">300</span> <small>km</small></div>
-    </section>
-</div>
+        <section class="control-box highlight">
+            <label>Autonomía Estimada / Objetivo</label>
+            <input type="range" id="range-slider" min="0" max="600" value="300">
+            <div class="autonomy-display">
+                <span id="km-val">300</span> <small>km</small>
+            </div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
