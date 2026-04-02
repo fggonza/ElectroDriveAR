@@ -1,42 +1,62 @@
-const carSelect = document.getElementById('car-select');
-const sohRange = document.getElementById('soh-range');
-const sohDisplay = document.getElementById('soh-display');
-const socRange = document.getElementById('soc-range');
-const socDisplay = document.getElementById('soc-display');
-const effRange = document.getElementById('efficiency-range');
-const effDisplay = document.getElementById('eff-display');
-const rangeDisplay = document.getElementById('range-display');
+const car = document.getElementById('car-select');
+const soh = document.getElementById('soh-range');
+const sStart = document.getElementById('soc-start');
+const sEnd = document.getElementById('soc-end');
+const eff = document.getElementById('eff-range');
+const rangeS = document.getElementById('range-slider');
 
-function updateCalculator() {
-    // 1. Obtener valores base
-    const baseCapacity = parseFloat(carSelect.value);
-    const soh = parseInt(sohRange.value) / 100;
-    const soc = parseInt(socRange.value) / 100;
-    const efficiency = parseFloat(effRange.value);
+function calculate(trigger) {
+    const batteryCap = parseFloat(car.value);
+    const health = parseInt(soh.value) / 100;
+    const performance = parseFloat(eff.value);
+    const realCap = batteryCap * health;
 
-    // 2. Lógica de Degradación: Capacidad Real disponible
-    const realCapacity = baseCapacity * soh;
+    // 1. Validar solapamiento de puntas (Batería)
+    let valStart = parseInt(sStart.value);
+    let valEnd = parseInt(sEnd.value);
 
-    // 3. Energía actual en la batería (kWh disponibles ahora)
-    const currentEnergy = realCapacity * soc;
+    if (trigger === 'start' && valStart > valEnd) sEnd.value = valStart;
+    if (trigger === 'end' && valEnd < valStart) sStart.value = valEnd;
 
-    // 4. Cálculo de Autonomía: Energía * km/kWh
-    const totalRange = currentEnergy * efficiency;
+    valStart = parseInt(sStart.value);
+    valEnd = parseInt(sEnd.value);
+    const deltaSOC = (valEnd - valStart) / 100;
 
-    // 5. Actualizar UI
-    sohDisplay.textContent = `${sohRange.value}%`;
-    socDisplay.textContent = socRange.value;
-    effDisplay.textContent = efficiency;
-    rangeDisplay.textContent = Math.round(totalRange);
+    // 2. Lógica Bidireccional
+    if (trigger === 'range') {
+        const targetKm = parseFloat(rangeS.value);
+        const neededSOC = (targetKm / performance) / realCap;
+        const newEnd = valStart + (neededSOC * 100);
+        sEnd.value = Math.min(100, Math.max(valStart, newEnd.toFixed(1)));
+        valEnd = sEnd.value;
+    }
 
-    // Feedback visual dinámico (opcional: cambia color si la batería es baja)
-    rangeDisplay.style.color = (soc < 0.2) ? '#ff4d4d' : 'var(--accent)';
+    const finalRange = realCap * ((valEnd - valStart) / 100) * performance;
+
+    // 3. Actualizar UI
+    document.getElementById('soh-val').textContent = soh.value + '%';
+    document.getElementById('soc-range-text').textContent = `${valStart}% - ${valEnd}%`;
+    document.getElementById('soc-delta').textContent = Math.round(valEnd - valStart);
+    document.getElementById('eff-val').textContent = performance;
+    document.getElementById('km-val').textContent = Math.round(finalRange);
+
+    if (trigger !== 'range') {
+        rangeS.value = finalRange;
+    }
 }
 
-// Event Listeners para reactividad inmediata
-[carSelect, sohRange, socRange, effRange].forEach(el => {
-    el.addEventListener('input', updateCalculator);
-});
+function setEff(val) {
+    eff.value = val;
+    calculate('eff');
+}
 
-// Inicialización
-updateCalculator();
+// Eventos de interacción
+car.addEventListener('change', () => calculate('normal'));
+soh.addEventListener('input', () => calculate('normal'));
+sStart.addEventListener('input', () => calculate('start'));
+sEnd.addEventListener('input', () => calculate('end'));
+eff.addEventListener('input', () => calculate('eff'));
+rangeS.addEventListener('input', () => calculate('range'));
+
+// Inicio
+calculate();
