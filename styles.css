@@ -92,5 +92,54 @@ input[type="range"] {
     color: var(--accent);
     text-shadow: 0 0 15px rgba(0,242,255,0.3);
 }
+/* ... (mantené el CSS anterior y sumá esto) ... */
+
+.double-slider-container {
+    position: relative;
+    height: 40px;
+    margin-top: 10px;
+}
+
+.double-slider-container input[type="range"] {
+    position: absolute;
+    width: 100%;
+    pointer-events: none; /* Permite clickear el de abajo */
+    appearance: none;
+    background: none;
+    z-index: 2;
+}
+
+/* Solo el círculo (thumb) debe recibir clicks */
+.double-slider-container input[type="range"]::-webkit-slider-thumb {
+    pointer-events: auto;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid white;
+}
+
+.preset-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.preset-buttons button {
+    background: #333;
+    border: none;
+    color: white;
+    padding: 5px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    cursor: pointer;
+}
+
+.preset-buttons button:active { background: var(--accent); }
+
+.highlight { border: 1px solid var(--accent); background: rgba(0,242,255,0.05); }
 
 .autonomy-value small { font-size: 1rem; color: var(--text-dim); }
