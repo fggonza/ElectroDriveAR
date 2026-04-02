@@ -1,145 +1,127 @@
 :root {
-    --bg-color: #121212;
-    --card-bg: #1e1e1e;
-    --accent: #00f2ff; /* Cian Eléctrico */
-    --accent-secondary: #39ff14; /* Verde Lima */
-    --text-main: #ffffff;
-    --text-dim: #a0a0a0;
+    --bg: #0f0f0f;
+    --card: #1a1a1a;
+    --accent: #00f2ff;
+    --accent-glow: rgba(0, 242, 255, 0.4);
+    --lime: #39ff14;
+    --text: #ffffff;
+    --text-dim: #888;
 }
 
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-    background-color: var(--bg-color);
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    color: var(--text-main);
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     display: flex;
     justify-content: center;
-    padding: 20px;
+    padding: 15px;
 }
 
 .calculator-card {
-    background: var(--card-bg);
+    background: var(--card);
     width: 100%;
-    max-width: 400px;
-    border-radius: 24px;
+    max-width: 420px;
+    border-radius: 28px;
     padding: 24px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     border: 1px solid rgba(255,255,255,0.05);
 }
 
+header h1 { font-size: 1.5rem; letter-spacing: -1px; margin-bottom: 4px; }
 .accent { color: var(--accent); }
-.subtitle { color: var(--text-dim); font-size: 0.8rem; margin-top: -10px; }
+.subtitle { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 20px; }
 
-.config-group { margin-top: 20px; }
-
-.input-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
+.section-group { margin-bottom: 15px; }
+.row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 
 select {
     background: #2a2a2a;
-    border: 1px solid var(--accent);
+    border: 1px solid #444;
     color: white;
-    padding: 8px;
-    border-radius: 10px;
-    outline: none;
-}
-
-.range-container { margin-bottom: 20px; }
-
-input[type="range"] {
-    width: 100%;
-    accent-color: var(--accent);
-    cursor: pointer;
-    margin: 10px 0;
-}
-
-.range-header {
-    display: flex;
-    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 12px;
     font-size: 0.9rem;
-    color: var(--text-dim);
 }
-
-.divider { border: 0; border-top: 1px solid #333; margin: 20px 0; }
 
 .control-box {
     background: rgba(255,255,255,0.03);
-    padding: 15px;
-    border-radius: 16px;
-    margin-bottom: 15px;
-    text-align: center;
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 12px;
 }
 
-.value-badge {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--accent-secondary);
-}
+.highlight { border: 1px solid var(--accent); background: rgba(0, 242, 255, 0.05); }
 
-.result-container {
-    text-align: center;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 2px solid var(--accent);
-}
+label { font-size: 0.85rem; color: var(--text-dim); display: block; margin-bottom: 10px; }
 
-.autonomy-value {
-    font-size: 3rem;
-    font-weight: 800;
-    color: var(--accent);
-    text-shadow: 0 0 15px rgba(0,242,255,0.3);
-}
-/* ... (mantené el CSS anterior y sumá esto) ... */
+.badge { font-weight: bold; color: var(--lime); font-size: 1rem; margin-top: 8px; text-align: center; }
 
-.double-slider-container {
-    position: relative;
-    height: 40px;
-    margin-top: 10px;
-}
-
-.double-slider-container input[type="range"] {
-    position: absolute;
+/* Sliders */
+input[type="range"] {
     width: 100%;
-    pointer-events: none; /* Permite clickear el de abajo */
+    height: 6px;
+    background: #333;
+    border-radius: 5px;
     appearance: none;
+    accent-color: var(--accent);
+}
+
+/* Doble Slider Custom */
+.double-slider-wrapper {
+    position: relative;
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.double-slider-wrapper input[type="range"] {
+    position: absolute;
+    pointer-events: none;
     background: none;
     z-index: 2;
 }
 
-/* Solo el círculo (thumb) debe recibir clicks */
-.double-slider-container input[type="range"]::-webkit-slider-thumb {
+.double-slider-wrapper input::-webkit-slider-thumb {
     pointer-events: auto;
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
-    background: var(--accent);
+    background: var(--text);
+    border: 3px solid var(--accent);
     cursor: pointer;
-    border: 2px solid white;
 }
 
-.preset-buttons {
+/* Botones Presets */
+.preset-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 5px;
-    margin-bottom: 10px;
+    gap: 6px;
+    margin-bottom: 12px;
 }
 
-.preset-buttons button {
-    background: #333;
-    border: none;
+.preset-grid button {
+    background: #2a2a2a;
+    border: 1px solid #444;
     color: white;
-    padding: 5px;
-    border-radius: 6px;
+    padding: 6px;
+    border-radius: 8px;
     font-size: 0.7rem;
     cursor: pointer;
+    transition: 0.2s;
 }
 
-.preset-buttons button:active { background: var(--accent); }
+.preset-grid button:active { background: var(--accent); color: #000; }
 
-.highlight { border: 1px solid var(--accent); background: rgba(0,242,255,0.05); }
+.autonomy-display {
+    text-align: center;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-shadow: 0 0 20px var(--accent-glow);
+}
 
-.autonomy-value small { font-size: 1rem; color: var(--text-dim); }
+.autonomy-display small { font-size: 1.2rem; color: var(--text-dim); font-weight: 400; }
+
+.divider { border: 0; border-top: 1px solid #333; margin: 15px 0; }
