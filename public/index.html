@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ElectroDriveAR | BYD Dolphin Mini</title>
+    <!-- Rutas relativas corregidas para tu estructura -->
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app-shell">
+        <header class="app-header">
+            <h1>ElectroDrive<span class="electric-text">AR</span></h1>
+            <p class="tagline">Simulador de Autonomía Real</p>
+        </header>
+
+        <main id="main-content">
+            <div class="card-ev">
+                <div class="display-main">
+                    <span id="range-value">380</span><span class="unit">km</span>
+                </div>
+
+                <div class="control-group">
+                    <label>Carga (SOC): <span id="soc-text">100%</span></label>
+                    <input type="range" id="soc-slider" min="0" max="100" value="100" class="slider">
+                </div>
+
+                <div class="control-group">
+                    <label>Antigüedad: <span id="years-text">0 años</span></label>
+                    <input type="range" id="years-slider" min="0" max="10" value="0" class="slider">
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
