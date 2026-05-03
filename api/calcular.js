@@ -9,7 +9,8 @@ const MODELOS = {
     }
 };
 
-export async function handler(event) {
+exports.handler = async (event) => {
+    //export async function handler(event) {
     const { soc, years } = event.queryStringParameters;
     const car = MODELOS.dolphin_mini_gs;
 

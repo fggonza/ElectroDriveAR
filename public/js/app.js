@@ -10,6 +10,7 @@ async function solicitarCalculo() {
     // Llamada asíncrona a nuestra API interna
     try {
         const res = await fetch(`/.netlify/functions/calcular?soc=${soc}&years=${years}`);
+//      const res = await fetch(`/.netlify/functions/calcular?soc=${soc}&years=${years}`);
         const data = await res.json();
         
         // Actualizamos la UI con la respuesta del servidor
