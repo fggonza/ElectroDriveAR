@@ -1,26 +1,28 @@
-// public/js/app.js
-const socS = document.getElementById('soc-slider');
-const yearS = document.getElementById('years-slider');
-const rangeT = document.getElementById('range-value');
+const rangeValue = document.getElementById('range-value');
+const socSlider = document.getElementById('soc-slider');
+const yearSlider = document.getElementById('years-slider');
 
-async function solicitarCalculo() {
-    const soc = socS.value;
-    const years = yearS.value;
+async function updateAll() {
+    const soc = socSlider.value;
+    const years = yearSlider.value;
 
-    // Llamada asíncrona a nuestra API interna
+    // 1. UX: Encendemos el estado visual de carga antes de viajar a la red
+    rangeValue.classList.add('calculando');
+
     try {
-        const res = await fetch(`/.netlify/functions/calcular?soc=${soc}&years=${years}`);
-//      const res = await fetch(`/.netlify/functions/calcular?soc=${soc}&years=${years}`);
-        const data = await res.json();
+        const response = await fetch(`/.netlify/functions/calcular?soc=${soc}&years=${years}`);
+        const data = await response.json();
         
-        // Actualizamos la UI con la respuesta del servidor
-        rangeT.innerText = data.km;
-        rangeT.style.color = soc < 20 ? '#ff4b2b' : '#39ff14';
-    } catch (err) {
-        console.error("Error conectando con el backend");
+        // 2. Éxito: Actualizamos el número real del Dolphin Mini GS
+        rangeValue.innerText = data.km;
+    } catch (error) {
+        console.error("Error contactando al servidor:", error);
+        rangeValue.innerText = "---";
+    } finally {
+        // 3. Limpieza: Apagamos el efecto luminoso, ya sea que haya fallado o funcionado
+        rangeValue.classList.remove('calculando');
     }
 }
 
-// Eventos reactivos
-socS.oninput = solicitarCalculo;
-yearS.oninput = solicitarCalculo;
+socSlider.oninput = updateAll;
+yearSlider.oninput = updateAll;
