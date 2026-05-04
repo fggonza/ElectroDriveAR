@@ -1,28 +1,37 @@
-const rangeValue = document.getElementById('range-value');
-const socSlider = document.getElementById('soc-slider');
-const yearSlider = document.getElementById('years-slider');
+// Constantes del vehículo (BYD Dolphin Mini GS)
+const RANGO_BASE_KM = 380; 
+const DEGRADACION_ANUAL = 0.015; // Asumimos un 1.5% de pérdida de capacidad por año
 
-async function updateAll() {
-    const soc = socSlider.value;
-    const years = yearSlider.value;
+// Selectores del DOM
+const socInput = document.getElementById('soc');
+const yearsInput = document.getElementById('years');
+const socValue = document.getElementById('soc-value');
+const yearsValue = document.getElementById('years-value');
+const outputAutonomia = document.getElementById('autonomia');
 
-    // 1. UX: Encendemos el estado visual de carga antes de viajar a la red
-    rangeValue.classList.add('calculando');
+// Función principal de cálculo
+function calcularAutonomia() {
+  const soc = parseInt(socInput.value);
+  const years = parseInt(yearsInput.value);
 
-    try {
-        const response = await fetch(`/.netlify/functions/calcular?soc=${soc}&years=${years}`);
-        const data = await response.json();
-        
-        // 2. Éxito: Actualizamos el número real del Dolphin Mini GS
-        rangeValue.innerText = data.km;
-    } catch (error) {
-        console.error("Error contactando al servidor:", error);
-        rangeValue.innerText = "---";
-    } finally {
-        // 3. Limpieza: Apagamos el efecto luminoso, ya sea que haya fallado o funcionado
-        rangeValue.classList.remove('calculando');
-    }
+  // Actualizamos los textos de los labels
+  socValue.textContent = `${soc}%`;
+  yearsValue.textContent = years === 1 ? '1 año' : `${years} años`;
+
+  // Cálculo: Salud de batería restante
+  const saludBateria = 1 - (years * DEGRADACION_ANUAL);
+  
+  // Cálculo: Rango actual basado en degradación y % de carga
+  const rangoMaximoActual = RANGO_BASE_KM * saludBateria;
+  const rangoEstimado = Math.round(rangoMaximoActual * (soc / 100));
+
+  // Render en UI
+  outputAutonomia.textContent = rangoEstimado;
 }
 
-socSlider.oninput = updateAll;
-yearSlider.oninput = updateAll;
+// Listeners: Usamos 'input' en lugar de 'change' para fluidez a 60fps
+socInput.addEventListener('input', calcularAutonomia);
+yearsInput.addEventListener('input', calcularAutonomia);
+
+// Init para setear valores por defecto al cargar
+calcularAutonomia();

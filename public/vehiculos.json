@@ -1,0 +1,30 @@
+[
+    {
+        "id": "byd-dolphin-mini-gs",
+        "marca": "BYD",
+        "modelo": "Dolphin Mini GS",
+        "bateria_kwh": 43.2,
+        "autonomia_km": 380
+    },
+    {
+        "id": "nissan-leaf",
+        "marca": "Nissan",
+        "modelo": "Leaf",
+        "bateria_kwh": 40.0,
+        "autonomia_km": 270
+    },
+    {
+        "id": "renault-kwid-etech",
+        "marca": "Renault",
+        "modelo": "Kwid E-Tech",
+        "bateria_kwh": 26.8,
+        "autonomia_km": 298
+    },
+    {
+        "id": "ford-mustang-mach-e",
+        "marca": "Ford",
+        "modelo": "Mustang Mach-E",
+        "bateria_kwh": 91.0,
+        "autonomia_km": 540
+    }
+]
