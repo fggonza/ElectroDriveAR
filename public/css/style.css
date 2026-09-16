@@ -126,6 +126,36 @@ body {
     transform: scale(1.15);
 }
 
+
+/* Input numérico editable para Rendimiento */
+.input-inline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.modern-num-input {
+    width: 65px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--accent-cyan);
+    border-radius: 8px;
+    color: var(--accent-cyan);
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-align: right;
+    padding: 3px 6px;
+    outline: none;
+}
+
+.modern-num-input:focus {
+    box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.unit-sm {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
 /* ==========================================
    DISPLAY DE RESULTADO
    ========================================== */

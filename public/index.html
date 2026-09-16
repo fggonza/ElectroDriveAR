@@ -11,7 +11,7 @@
 
     <!-- Contenedor Principal -->
     <div id="app-container">
-        
+         
         <!-- ==========================================
              VISTA 1: SIMULADOR (Activa por defecto)
              ========================================== -->
@@ -39,6 +39,19 @@
                         <span id="years-display" class="accent-text">0 años</span>
                     </div>
                     <input type="range" id="years-slider" class="electric-slider" min="0" max="15" value="0" step="1">
+                </div>
+
+
+<!-- Slider y Entrada de Rendimiento (Consumo) -->
+                <div class="slider-container">
+                    <div class="slider-labels">
+                        <label for="consumption-slider">Rendimiento (kWh/100km)</label>
+                        <div class="input-inline">
+                            <input type="number" id="consumption-input" class="modern-num-input" min="10" max="20" step="0.1" value="13.5">
+                            <span class="unit-sm">kWh/100km</span>
+                        </div>
+                    </div>
+                    <input type="range" id="consumption-slider" class="electric-slider" min="10" max="20" step="0.1" value="13.5">
                 </div>
 
                 <!-- Display de Resultados -->

@@ -46,21 +46,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const rangeValue = document.getElementById('range-value');
     const evTitle = document.getElementById('ev-title');
     const evBadge = document.getElementById('ev-badge');
+    const consumptionSlider = document.getElementById('consumption-slider');
+    const consumptionInput = document.getElementById('consumption-input');
 
-    function calcularAutonomia() {
-        if (!vehiculoActivo || !socSlider) return; 
+ function calcularAutonomia() {
+        if (!vehiculoActivo || !socSlider || !consumptionSlider) return; 
 
         const soc = parseInt(socSlider.value);
         const years = parseInt(yearsSlider.value);
+        const consumo = parseFloat(consumptionSlider.value);
 
-        // Actualizar UI de los sliders
+        // Actualizar UI de los sliders y textos
         socDisplay.textContent = `${soc}%`;
         yearsDisplay.textContent = years === 1 ? '1 año' : `${years} años`;
+        consumptionInput.value = consumo.toFixed(1);
 
-        // Matemática (Zero-Latency)
+        // Matemática: Batería neta disponible según SOC y degradación
         const saludBateria = 1 - (years * DEGRADACION_ANUAL);
-        const rangoMaximoActual = vehiculoActivo.autonomia_km * saludBateria;
-        const rangoEstimado = Math.round(rangoMaximoActual * (soc / 100));
+        const kwhDisponibles = (vehiculoActivo.bateria_kwh * saludBateria) * (soc / 100);
+
+        // Autonomía calculada según rendimiento real: (kWh disponibles / consumo cada 100km) * 100
+        const rangoEstimado = consumo > 0 ? Math.round((kwhDisponibles / consumo) * 100) : 0;
 
         // Renderizar resultado
         rangeValue.textContent = rangoEstimado;
@@ -70,6 +76,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (socSlider && yearsSlider) {
         socSlider.addEventListener('input', calcularAutonomia);
         yearsSlider.addEventListener('input', calcularAutonomia);
+
+// Sincronización del slider con el input manual
+        consumptionSlider.addEventListener('input', () => {
+            consumptionInput.value = consumptionSlider.value;
+            calcularAutonomia();
+        });
+
+        consumptionInput.addEventListener('input', () => {
+            let val = parseFloat(consumptionInput.value);
+            if (!isNaN(val)) {
+                if (val > 20) val = 20;
+                if (val < 10) val = 10;
+                consumptionSlider.value = val;
+                calcularAutonomia();
+            }
+        });
+
+
         calcularAutonomia(); // Primera carga de números
     }
 
