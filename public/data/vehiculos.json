@@ -7,6 +7,13 @@
         "autonomia_km": 380
     },
     {
+        "id": "byd-dolphin-mini-gl",
+        "marca": "BYD",
+        "modelo": "Dolphin Mini GL",
+        "bateria_kwh": 30.08,
+        "autonomia_km": 280
+    },
+    {
         "id": "nissan-leaf",
         "marca": "Nissan",
         "modelo": "Leaf",
