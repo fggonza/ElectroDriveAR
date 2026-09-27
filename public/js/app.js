@@ -49,27 +49,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const consumptionSlider = document.getElementById('consumption-slider');
     const consumptionInput = document.getElementById('consumption-input');
 
- function calcularAutonomia() {
-        if (!vehiculoActivo || !socSlider || !consumptionSlider) return; 
+ let debounceTimer = null;
+
+    async function solicitarCalculoAlServidor() {
+        if (!vehiculoActivo || !socSlider || !consumptionSlider) return;
 
         const soc = parseInt(socSlider.value);
         const years = parseInt(yearsSlider.value);
         const consumo = parseFloat(consumptionSlider.value);
 
-        // Actualizar UI de los sliders y textos
+        // Actualizar textos de los controles en la pantalla
         socDisplay.textContent = `${soc}%`;
         yearsDisplay.textContent = years === 1 ? '1 año' : `${years} años`;
         consumptionInput.value = consumo.toFixed(1);
 
-        // Matemática: Batería neta disponible según SOC y degradación
-        const saludBateria = 1 - (years * DEGRADACION_ANUAL);
-        const kwhDisponibles = (vehiculoActivo.bateria_kwh * saludBateria) * (soc / 100);
+        try {
+            // Llamada GET al endpoint de Node.js
+            const query = new URLSearchParams({
+                soc,
+                years,
+                consumo,
+                bateria_kwh: vehiculoActivo.bateria_kwh
+            });
 
-        // Autonomía calculada según rendimiento real: (kWh disponibles / consumo cada 100km) * 100
-        const rangoEstimado = consumo > 0 ? Math.round((kwhDisponibles / consumo) * 100) : 0;
+            const res = await fetch(`/api/calcular?${query.toString()}`);
+            if (!res.ok) throw new Error('Error en respuesta del servidor');
 
-        // Renderizar resultado
-        rangeValue.textContent = rangoEstimado;
+            const data = await res.json();
+            // Mostrar en pantalla el resultado calculado por Node.js
+            rangeValue.textContent = data.rangoEstimado;
+        } catch (error) {
+            console.error("Error al calcular en el servidor:", error);
+        }
+    }
+
+    function calcularAutonomia() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(solicitarCalculoAlServidor, 50);
     }
 
     // Activar sliders
