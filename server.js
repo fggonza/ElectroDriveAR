@@ -37,6 +37,14 @@ app.get('/api/calcular', (req, res) => {
     }
 });
 
+// Endpoint de registro / ping local
+app.get('/api/ping', (req, res) => {
+    const plataforma = req.query.origen || 'desconocido';
+    const fechaHora = new Date().toLocaleString();
+    console.log(`📡 [PING REGISTRADO] Apertura detectada | Origen: ${plataforma} | Fecha: ${fechaHora}`);
+    res.json({ status: 'ok', registrado: true });
+});
+
 app.listen(PORT, () => {
     console.log(`⚡ ElectroDriveAR corriendo en http://localhost:${PORT}`);
 });

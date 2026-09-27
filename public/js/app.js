@@ -4,6 +4,26 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ==========================================
+    // TELEMETRÍA: AVISAR APERTURA AL SERVIDOR
+    // ==========================================
+    function registrarApertura() {
+        // Detectar si corre dentro de la APK (Capacitor) o en un navegador web
+        const esAppMovil = window.Capacitor !== undefined || window.location.protocol === 'capacitor:';
+        const origen = esAppMovil ? 'app-movil' : 'web';
+
+        // Si es app móvil apunta a tu dominio; si es web usa ruta relativa
+        const baseUrl = esAppMovil ? 'https://electrodrivear.com.ar' : '';
+
+        // Envío silencioso en segundo plano sin trabar la interfaz
+        fetch(`${baseUrl}/api/ping?origen=${origen}`)
+            .then(res => res.json())
+            .then(data => console.log('Telemetría registrada:', data.status))
+            .catch(() => {}); // Si no hay internet al abrir, continúa sin error
+    }
+
+    registrarApertura();
+
+    // ==========================================
     // 1. LÓGICA DE NAVEGACIÓN (TABS)
     // ==========================================
     const navButtons = document.querySelectorAll('.nav-btn');
@@ -124,7 +144,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Usamos ruta relativa por seguridad en servidores locales
-            const response = await fetch('data/vehiculos.json'); 
+           // const response = await fetch('data/vehiculos.json'); 
+            const response = await fetch('/data/vehiculos.json');
             const vehiculosDB = await response.json();
             
             // Poblar el selector

@@ -2,105 +2,123 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- viewport-fit=cover es crucial para el "notch" en iPhones y Androids modernos -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>ElectroDriveAR</title>
+    <title>ElectroDriveAR - Movilidad Eléctrica</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <!-- Contenedor Principal -->
-    <div id="app-container">
-         
-        <!-- ==========================================
-             VISTA 1: SIMULADOR (Activa por defecto)
-             ========================================== -->
-        <main id="vista-simulador" class="view active">
-            <div class="ev-card">
-                <div class="ev-header">
-                    <!-- Estos datos se pisarán dinámicamente con JS, pero dejamos un placeholder realista -->
-                    <h2 id="ev-title">BYD Dolphin Mini GS</h2>
-                    <span id="ev-badge" class="badge">43.2 kWh</span>
-                </div>
+    <!-- PORTADA / HERO -->
+    <header class="hero-section">
+        <div class="hero-content">
+            <span class="badge-brand">⚡ ElectroDriveAR</span>
+            <h1 class="hero-title">Simulador de Autonomía Eléctrica</h1>
+            <p class="hero-subtitle">
+                Calculá en tiempo real el rango de tu vehículo según nivel de carga, degradación de batería y rendimiento en ruta o ciudad.
+            </p>
+        </div>
+    </header>
 
-                <!-- Slider SOC -->
-                <div class="slider-container">
-                    <div class="slider-labels">
-                        <label for="soc-slider">Nivel de Carga (SOC)</label>
-                        <span id="soc-display" class="accent-text">100%</span>
+    <!-- CALCULADORA / SIMULADOR -->
+    <section id="simulador-section" class="app-wrapper">
+        <div id="app-container">
+            
+            <!-- VISTA 1: SIMULADOR -->
+            <main id="vista-simulador" class="view active">
+                <div class="ev-card">
+                    <div class="ev-header">
+                        <h2 id="ev-title">BYD Dolphin Mini GS</h2>
+                        <span id="ev-badge" class="badge">43.2 kWh</span>
                     </div>
-                    <input type="range" id="soc-slider" class="electric-slider" min="5" max="100" value="100">
-                </div>
 
-                <!-- Slider Antigüedad (Degradación) -->
-                <div class="slider-container">
-                    <div class="slider-labels">
-                        <label for="years-slider">Antigüedad de Batería</label>
-                        <span id="years-display" class="accent-text">0 años</span>
-                    </div>
-                    <input type="range" id="years-slider" class="electric-slider" min="0" max="15" value="0" step="1">
-                </div>
-
-
-<!-- Slider y Entrada de Rendimiento (Consumo) -->
-                <div class="slider-container">
-                    <div class="slider-labels">
-                        <label for="consumption-slider">Rendimiento (kWh/100km)</label>
-                        <div class="input-inline">
-                            <input type="number" id="consumption-input" class="modern-num-input" min="10" max="20" step="0.1" value="13.5">
-                            <span class="unit-sm">kWh/100km</span>
+                    <!-- Slider SOC -->
+                    <div class="slider-container">
+                        <div class="slider-labels">
+                            <label for="soc-slider">Nivel de Carga (SOC)</label>
+                            <span id="soc-display" class="accent-text">100%</span>
                         </div>
+                        <input type="range" id="soc-slider" class="electric-slider" min="5" max="100" value="100">
                     </div>
-                    <input type="range" id="consumption-slider" class="electric-slider" min="10" max="20" step="0.1" value="13.5">
-                </div>
 
-                <!-- Display de Resultados -->
-                <div class="result-container">
-                    <div class="range-output" id="output-container">
-                        <span id="range-value">380</span> <span class="unit">km</span>
+                    <!-- Slider Antigüedad (Degradación) -->
+                    <div class="slider-container">
+                        <div class="slider-labels">
+                            <label for="years-slider">Antigüedad de Batería</label>
+                            <span id="years-display" class="accent-text">0 años</span>
+                        </div>
+                        <input type="range" id="years-slider" class="electric-slider" min="0" max="15" value="0" step="1">
                     </div>
-                    <!-- Spinner de carga oculto por defecto -->
-                    <div id="loader" class="electric-loader hidden"></div>
+
+                    <!-- Slider y Entrada de Rendimiento -->
+                    <div class="slider-container">
+                        <div class="slider-labels">
+                            <label for="consumption-slider">Rendimiento (kWh/100km)</label>
+                            <div class="input-inline">
+                                <input type="number" id="consumption-input" class="modern-num-input" min="10" max="20" step="0.1" value="13.5">
+                                <span class="unit-sm">kWh/100km</span>
+                            </div>
+                        </div>
+                        <input type="range" id="consumption-slider" class="electric-slider" min="10" max="20" step="0.1" value="13.5">
+                    </div>
+
+                    <!-- Display de Resultados -->
+                    <div class="result-container">
+                        <div class="range-output" id="output-container">
+                            <span id="range-value">380</span> <span class="unit">km</span>
+                        </div>
+                        <div id="loader" class="electric-loader hidden"></div>
+                    </div>
                 </div>
-            </div>
-        </main>
+            </main>
 
-        <!-- ==========================================
-             VISTA 2: CONFIGURACIÓN DE VEHÍCULO
-             ========================================== -->
-        <main id="vista-configuracion" class="view">
-            <div class="ev-card">
-                <h2>Ajustes de Vehículo</h2>
-                <p class="text-muted">Seleccioná tu modelo para ajustar los cálculos de autonomía.</p>
-                
-                <div class="input-group">
-                    <select id="vehiculo-select" class="modern-select">
-                        <option value="">Cargando catálogo...</option>
-                    </select>
+            <!-- VISTA 2: CONFIGURACIÓN DE VEHÍCULO -->
+            <main id="vista-configuracion" class="view">
+                <div class="ev-card tab-vehiculo">
+                    <h2>Ajustes de Vehículo</h2>
+                    <p class="text-muted">Seleccioná tu modelo para ajustar los cálculos de autonomía.</p>
+                    
+                    <div class="input-group">
+                        <select id="vehiculo-select" class="modern-select">
+                            <option value="">Cargando catálogo...</option>
+                        </select>
+                    </div>
+
+                    <div id="vehiculo-info" class="ev-specs"></div>
                 </div>
-                
-                <div id="vehiculo-info" class="ev-specs">
-                    <!-- Aquí se inyectan las specs (batería, autonomía WLTP) vía JS -->
-                </div>
-            </div>
-        </main>
+            </main>
 
-    </div>
+            <!-- NAVEGACIÓN INFERIOR -->
+            <nav class="bottom-nav">
+                <button class="nav-btn active" data-target="vista-simulador">
+                    ⚡ Simulador
+                </button>
+                <button class="nav-btn" data-target="vista-configuracion">
+                    🚗 Vehículo
+                </button>
+            </nav>
 
-    <!-- ==========================================
-         BARRA DE NAVEGACIÓN INFERIOR (Estilo iOS/Android)
-         ========================================== -->
-    <nav class="bottom-nav">
-        <!-- Usamos data-target para vincular el botón con el ID del main correspondiente -->
-        <button class="nav-btn active" data-target="vista-simulador">
-            ⚡ Simulador
-        </button>
-        <button class="nav-btn" data-target="vista-configuracion">
-            🚗 Vehículo
-        </button>
-    </nav>
+        </div>
+    </section>
 
-    <!-- Conexión de Lógica -->
+    <!-- CARACTERÍSTICAS -->
+    <section class="features-section">
+        <div class="feature-card">
+            <div class="feature-icon">🔋</div>
+            <h3>Degradación Real</h3>
+            <p>Estimación del 1.5% de pérdida anual adaptada a celdas LFP y NMC modernas.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⚙️</div>
+            <h3>Consumo Ajustable</h3>
+            <p>Ajustá el rendimiento exacto de tu auto entre 10 y 20 kWh/100 km.</p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer-section">
+        <p>© 2026 ElectroDriveAR · Movilidad eléctrica en Argentina.</p>
+    </footer>
+
     <script src="js/app.js"></script>
 </body>
 </html>
