@@ -1,29 +1,41 @@
-// api/calcular.js
-// Fuente de verdad unica para ElectroDriveAR
-const MODELOS = {
-    "dolphin_mini_gs": {
-        nombre: "BYD Dolphin Mini GS",
-        bateria_kwh: 43.2, //
-        rango_nominal: 380, 
-        degradacion_anual: 1.5 // % LFP
-    }
-};
+// api/calcular.js - Backend Serverless en Netlify
+const DEGRADACION_ANUAL = 0.015; // 1.5% anual
 
 exports.handler = async (event) => {
-    //export async function handler(event) {
-    const { soc, years } = event.queryStringParameters;
-    const car = MODELOS.dolphin_mini_gs;
+    try {
+        const params = event.queryStringParameters || {};
+        const soc = parseFloat(params.soc);
+        const years = parseFloat(params.years);
+        const consumo = parseFloat(params.consumo);
+        const bateriaKwh = parseFloat(params.bateria_kwh);
 
-    // L�gica protegida en el servidor
-    const salud = 1 - (parseFloat(years) * car.degradacion_anual / 100);
-    const autonomiaMax = car.rango_nominal * salud;
-    const resultado = Math.round((autonomiaMax * parseFloat(soc)) / 100);
+        if (isNaN(soc) || isNaN(years) || isNaN(consumo) || isNaN(bateriaKwh)) {
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ error: 'Parámetros inválidos' })
+            };
+        }
 
-    return {
-        statusCode: 200,
-        body: JSON.stringify({ 
-            km: resultado,
-            health: (salud * 100).toFixed(1)
-        })
-    };
-}
+        // Lógica matemática protegida en el servidor
+        const saludBateria = 1 - (years * DEGRADACION_ANUAL);
+        const kwhDisponibles = (bateriaKwh * saludBateria) * (soc / 100);
+        const rangoEstimado = consumo > 0 ? Math.round((kwhDisponibles / consumo) * 100) : 0;
+
+        return {
+            statusCode: 200,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                rangoEstimado,
+                kwhDisponibles: Number(kwhDisponibles.toFixed(2)),
+                saludBateriaPct: Number((saludBateria * 100).toFixed(1))
+            })
+        };
+    } catch (err) {
+        return {
+            statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ error: 'Error interno en el servidor' })
+        };
+    }
+};
