@@ -16,13 +16,14 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     display: flex;
     justify-content: center;
-    padding: 20px 20px 100px 20px; /* Padding bottom para que la nav no tape el contenido */
+    padding: 20px 20px 90px 20px; /* Padding inferior para liberar espacio de botones flotantes */
     margin: 0;
 }
 
 #app-container {
     width: 100%;
-    max-width: 400px;
+    max-width: 480px; /* Contenedor general centrado y unificado */
+    margin: 0 auto;
 }
 
 /* ==========================================
@@ -50,6 +51,24 @@ body {
     padding: 28px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.05);
+    
+    /* Configuración clave para Scroll interno y alturas */
+    width: 100%; 
+    box-sizing: border-box;
+    max-height: calc(100dvh - 160px); /* Altura máxima limitando la tarjeta a la pantalla visible */
+    overflow-y: auto; /* Habilita el scroll si el contenido es mayor a la altura máxima */
+}
+
+/* Estilización del scroll para que se vea moderno */
+.ev-card::-webkit-scrollbar {
+    width: 6px;
+}
+.ev-card::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+.ev-card::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .ev-header {
@@ -126,8 +145,6 @@ body {
     transform: scale(1.15);
 }
 
-
-/* Input numérico editable para Rendimiento */
 .input-inline {
     display: flex;
     align-items: center;
@@ -199,11 +216,8 @@ body {
     border-radius: 12px;
     font-size: 1rem;
     outline: none;
-    /* Corrección de compatibilidad para linters y navegadores antiguos: */
     -webkit-appearance: none;
-    -moz-appearance: none;
     appearance: none;
-    /* Flecha customizada en SVG (Color Cian) */
     background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2300e5ff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
     background-repeat: no-repeat;
     background-position: right 15px top 50%;
@@ -215,16 +229,6 @@ body {
     box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
 }
 
-.ev-specs {
-    margin-top: 20px;
-    padding: 15px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 12px;
-    font-size: 0.95rem;
-    color: #ccc;
-    line-height: 1.6;
-}
-
 /* ==========================================
    NAVEGACIÓN INFERIOR (Estilo App Nativa)
    ========================================== */
@@ -233,14 +237,14 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    background: rgba(22, 26, 35, 0.9);
+    background: rgba(22, 26, 35, 0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     display: flex;
     justify-content: space-around;
-    padding: 15px 0 calc(15px + env(safe-area-inset-bottom));
+    padding: 15px 0 calc(15px + env(safe-area-inset-bottom)); /* Considera la barra del sistema iOS/Android */
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 100;
+    z-index: 1000;
 }
 
 .nav-btn {
@@ -251,6 +255,7 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    padding: 8px 12px;
 }
 
 .nav-btn.active {
@@ -261,16 +266,14 @@ body {
 /* ==========================================
    ESTILOS LANDING PAGE / ONE-PAGE
    ========================================== */
-
-/* Envoltorio principal */
 .app-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px 10px;
+    width: 100%;
 }
 
-/* Portada / Hero */
 .hero-section {
     text-align: center;
     padding: 60px 20px 30px;
@@ -306,44 +309,18 @@ body {
     margin-bottom: 24px;
 }
 
-.hero-actions {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
+/* Sección de Características y Footer ocultas en Móvil cuando corren como app */
+body.es-app .hero-section,
+body.es-app .features-section,
+body.es-app .footer-section {
+    display: none !important;
 }
 
-.btn-primary {
-    background: var(--accent-cyan, #00e5ff);
-    color: #0b0f19;
-    text-decoration: none;
-    font-weight: 700;
-    padding: 12px 24px;
-    border-radius: 12px;
-    transition: transform 0.2s, box-shadow 0.2s;
+body.es-app .app-wrapper {
+    padding: 0;
+    min-height: 100dvh;
 }
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 229, 255, 0.4);
-}
-
-.btn-secondary {
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--text-main, #ffffff);
-    text-decoration: none;
-    font-weight: 600;
-    padding: 12px 20px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    transition: background 0.2s;
-}
-
-.btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.12);
-}
-
-/* Sección de Características */
 .features-section {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -373,13 +350,6 @@ body {
     margin-bottom: 8px;
 }
 
-.feature-card p {
-    font-size: 0.9rem;
-    color: var(--text-muted, #94a3b8);
-    line-height: 1.4;
-}
-
-/* Pie de página */
 .footer-section {
     text-align: center;
     padding: 30px 20px;
@@ -387,21 +357,6 @@ body {
     font-size: 0.85rem;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     margin-top: 40px;
-}
-
-/* Altura uniforme para la solapa Vehículo */
-.tab-vehiculo {
-    min-height: 480px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: 16px;
-}
-
-.ev-specs {
-    margin-top: 10px;
-    line-height: 1.8;
-    color: var(--text-main, #ffffff);
 }
 
 /* ========================================================
@@ -542,13 +497,8 @@ body {
    ======================================================== */
 @media (max-width: 600px) {
     .hero-title { font-size: 1.7rem; }
-    #app-container { width: 100%; max-width: 100%; padding: 0 4px; }
+    #app-container { padding: 0 4px; }
     .stat-grid-2x2 { grid-template-columns: 1fr; }
     .bottom-nav { gap: 4px; }
-    .nav-btn { font-size: 0.75rem; padding: 10px 4px; }
-}
-
-@media (min-width: 768px) {
-    .hero-title { font-size: 2.6rem; }
-    #app-container { max-width: 480px; margin: 0 auto; }
+    .nav-btn { font-size: 0.8rem; padding: 10px 6px; }
 }
