@@ -403,3 +403,152 @@ body {
     line-height: 1.8;
     color: var(--text-main, #ffffff);
 }
+
+/* ========================================================
+   MÓDULO DE CONSUMO, TARIFAS Y COMPARATIVA TÉRMICA
+   ======================================================== */
+.calc-section-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--accent-cyan, #00e5ff);
+    margin: 18px 0 10px;
+    text-transform: uppercase;
+}
+.text-green-title { color: #00e676 !important; }
+
+.field-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.sub-caption {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-bottom: 12px;
+}
+.w-80 { width: 80px; }
+.w-full { width: 100%; box-sizing: border-box; }
+.mt-12 { margin-top: 12px; }
+
+.grid-3col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+.grid-2col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+.lbl-sm {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.stat-grid-2x2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.stat-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.stat-title {
+    font-size: 0.68rem;
+    color: #94a3b8;
+    font-weight: 600;
+}
+.stat-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+.text-cyan { color: #00e5ff !important; }
+.text-green { color: #00e676 !important; }
+.text-amber { color: #ffb300 !important; }
+
+.highlight-card {
+    background: rgba(0, 230, 118, 0.05);
+    border: 1px solid rgba(0, 230, 118, 0.4);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+}
+.highlight-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.highlight-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 4px 0;
+}
+.thermal-box {
+    background: rgba(255, 179, 0, 0.05);
+    border: 1px solid rgba(255, 179, 0, 0.4);
+}
+.ahorro-tag {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #00e676;
+    margin-top: 4px;
+}
+.badge-sm {
+    font-size: 0.75rem;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 8px;
+    border-radius: 6px;
+    color: #ffb300;
+}
+
+/* Tabla de Cuadros Tarifarios */
+.table-responsive {
+    overflow-x: auto;
+    margin-top: 10px;
+}
+.tarifas-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+    text-align: right;
+}
+.tarifas-table th, .tarifas-table td {
+    padding: 6px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.tarifas-table th {
+    color: #94a3b8;
+    font-weight: 600;
+    text-align: center;
+}
+.th-edenor { color: #00e676 !important; }
+.th-edesur { color: #00e5ff !important; }
+.tarifas-table td:first-child { text-align: left; font-weight: 700; }
+
+/* ========================================================
+   RESPONSIVE: DIFERENCIACIÓN WEB PC VS WEB MÓVIL
+   ======================================================== */
+@media (max-width: 600px) {
+    .hero-title { font-size: 1.7rem; }
+    #app-container { width: 100%; max-width: 100%; padding: 0 4px; }
+    .stat-grid-2x2 { grid-template-columns: 1fr; }
+    .bottom-nav { gap: 4px; }
+    .nav-btn { font-size: 0.75rem; padding: 10px 4px; }
+}
+
+@media (min-width: 768px) {
+    .hero-title { font-size: 2.6rem; }
+    #app-container { max-width: 480px; margin: 0 auto; }
+}

@@ -45,6 +45,17 @@ app.get('/api/ping', (req, res) => {
     res.json({ status: 'ok', registrado: true });
 });
 
+const calcularConsumoHandler = require('./api/calcular-consumo.js').handler;
+
+app.post('/api/calcular-consumo', async (req, res) => {
+    const result = await calcularConsumoHandler({ httpMethod: 'POST', body: JSON.stringify(req.body) });
+    res.status(result.statusCode).json(JSON.parse(result.body));
+});
+app.get('/api/calcular-consumo', async (req, res) => {
+    const result = await calcularConsumoHandler({ httpMethod: 'GET', queryStringParameters: req.query });
+    res.status(result.statusCode).json(JSON.parse(result.body));
+});
+
 app.listen(PORT, () => {
     console.log(`⚡ ElectroDriveAR corriendo en http://localhost:${PORT}`);
 });

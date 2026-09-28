@@ -4,50 +4,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ==========================================
-    // TELEMETRÍA: AVISAR APERTURA AL SERVIDOR
-    // ==========================================
-    function registrarApertura() {
-        // Detectar si corre dentro de la APK (Capacitor) o en un navegador web
-        const esAppMovil = window.Capacitor !== undefined || window.location.protocol === 'capacitor:';
-        const origen = esAppMovil ? 'app-movil' : 'web';
-
-        // Si es app móvil apunta a tu dominio; si es web usa ruta relativa
-        const baseUrl = esAppMovil ? 'https://electrodrivear.com.ar' : '';
-
-        // Envío silencioso en segundo plano sin trabar la interfaz
-        fetch(`${baseUrl}/api/ping?origen=${origen}`)
-            .then(res => res.json())
-            .then(data => console.log('Telemetría registrada:', data.status))
-            .catch(() => {}); // Si no hay internet al abrir, continúa sin error
-    }
-
-    registrarApertura();
-
-    // ==========================================
-    // 1. LÓGICA DE NAVEGACIÓN (TABS)
-    // ==========================================
-    const navButtons = document.querySelectorAll('.nav-btn');
-    const views = document.querySelectorAll('.view');
-
-    navButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Apagar todos
-            navButtons.forEach(b => b.classList.remove('active'));
-            views.forEach(v => v.classList.remove('active'));
-            
-            // Encender el clickeado
-            btn.classList.add('active');
-            const targetView = document.getElementById(btn.getAttribute('data-target'));
-            if(targetView) targetView.classList.add('active');
-        });
-    });
-
-    // ==========================================
-    // 2. ESTADO GLOBAL Y VARIABLES
+    // 1. ESTADO GLOBAL Y VARIABLES BASE
     // ==========================================
     const DEGRADACION_ANUAL = 0.015; // 1.5% de pérdida por año
     
-    // Fallback: Si falla el JSON, la app arranca igual con tu auto
+    // Fallback: Si falla el JSON, la app arranca con datos de respaldo
     let vehiculoActivo = {
         id: "byd-dolphin-mini-gs",
         marca: "BYD",
@@ -57,19 +18,67 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 3. LÓGICA DE CÁLCULO DE AUTONOMÍA
+    // 2. REFERENCIAS AL DOM (SLIDERS Y CONTROLES)
     // ==========================================
+    // Solapa 1: Simulador de Autonomía
     const socSlider = document.getElementById('soc-slider');
     const yearsSlider = document.getElementById('years-slider');
+    const consumptionSlider = document.getElementById('consumption-slider');
+    const consumptionInput = document.getElementById('consumption-input');
+
     const socDisplay = document.getElementById('soc-display');
     const yearsDisplay = document.getElementById('years-display');
     const rangeValue = document.getElementById('range-value');
     const evTitle = document.getElementById('ev-title');
     const evBadge = document.getElementById('ev-badge');
-    const consumptionSlider = document.getElementById('consumption-slider');
-    const consumptionInput = document.getElementById('consumption-input');
 
- let debounceTimer = null;
+    // Solapa 2: Selector de Vehículo
+    const selectVehiculo = document.getElementById('vehiculo-select');
+    const infoVehiculo = document.getElementById('vehiculo-info');
+
+    // Solapas 3 y 4: Consumo, Tarifas y Combustible
+    const baseHogarInput = document.getElementById('base-hogar-input');
+    const distanciaSlider = document.getElementById('distancia-slider');
+    const distanciaDisplay = document.getElementById('distancia-display');
+    const proveedorSelect = document.getElementById('proveedor-select');
+    const ivaInput = document.getElementById('iva-input');
+    const art34Input = document.getElementById('art34-input');
+    const otrosInput = document.getElementById('otros-input');
+    const perdidaInput = document.getElementById('perdida-input');
+    const naftaPrecioInput = document.getElementById('nafta-precio-input');
+    const naftaConsumoInput = document.getElementById('nafta-consumo-input');
+
+    const valFacturaBase = document.getElementById('val-factura-base');
+    const valCargaKwh = document.getElementById('val-carga-kwh');
+    const valFacturaTotal = document.getElementById('val-factura-total');
+    const valCostoKmEv = document.getElementById('val-costo-km-ev');
+    const valCostoEvMensual = document.getElementById('val-costo-ev-mensual');
+    const valCostoKmTermico = document.getElementById('val-costo-km-termico');
+    const valCostoTermicoMensual = document.getElementById('val-costo-termico-mensual');
+    const valAhorroMensual = document.getElementById('val-ahorro-mensual');
+
+    // ==========================================
+    // 3. NAVEGACIÓN ENTRE SOLAPAS (TABS)
+    // ==========================================
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const views = document.querySelectorAll('.view');
+
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            navButtons.forEach(b => b.classList.remove('active'));
+            views.forEach(v => v.classList.remove('active'));
+            
+            btn.classList.add('active');
+            const targetId = btn.getAttribute('data-target');
+            const targetView = document.getElementById(targetId);
+            if (targetView) targetView.classList.add('active');
+        });
+    });
+
+    // ==========================================
+    // 4. LÓGICA DEL SIMULADOR DE AUTONOMÍA
+    // ==========================================
+    let debounceTimer = null;
 
     async function solicitarCalculoAlServidor() {
         if (!vehiculoActivo || !socSlider || !consumptionSlider) return;
@@ -78,13 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const years = parseInt(yearsSlider.value);
         const consumo = parseFloat(consumptionSlider.value);
 
-        // Actualizar textos de los controles en la pantalla
-        socDisplay.textContent = `${soc}%`;
-        yearsDisplay.textContent = years === 1 ? '1 año' : `${years} años`;
-        consumptionInput.value = consumo.toFixed(1);
+        if (socDisplay) socDisplay.textContent = `${soc}%`;
+        if (yearsDisplay) yearsDisplay.textContent = years === 1 ? '1 año' : `${years} años`;
+        if (consumptionInput) consumptionInput.value = consumo.toFixed(1);
 
         try {
-            // Llamada GET al endpoint de Node.js
             const query = new URLSearchParams({
                 soc,
                 years,
@@ -96,8 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!res.ok) throw new Error('Error en respuesta del servidor');
 
             const data = await res.json();
-            // Mostrar en pantalla el resultado calculado por Node.js
-            rangeValue.textContent = data.rangoEstimado;
+            if (rangeValue) rangeValue.textContent = data.rangoEstimado;
         } catch (error) {
             console.error("Error al calcular en el servidor:", error);
         }
@@ -108,47 +114,108 @@ document.addEventListener('DOMContentLoaded', () => {
         debounceTimer = setTimeout(solicitarCalculoAlServidor, 50);
     }
 
-    // Activar sliders
-    if (socSlider && yearsSlider) {
+    if (socSlider && yearsSlider && consumptionSlider) {
         socSlider.addEventListener('input', calcularAutonomia);
         yearsSlider.addEventListener('input', calcularAutonomia);
 
-// Sincronización del slider con el input manual
         consumptionSlider.addEventListener('input', () => {
-            consumptionInput.value = consumptionSlider.value;
+            if (consumptionInput) consumptionInput.value = consumptionSlider.value;
             calcularAutonomia();
+            solicitarCalculoConsumo(); // Sincroniza con la solapa de costo
         });
 
-        consumptionInput.addEventListener('input', () => {
-            let val = parseFloat(consumptionInput.value);
-            if (!isNaN(val)) {
-                if (val > 20) val = 20;
-                if (val < 10) val = 10;
-                consumptionSlider.value = val;
-                calcularAutonomia();
-            }
-        });
+        if (consumptionInput) {
+            consumptionInput.addEventListener('input', () => {
+                let val = parseFloat(consumptionInput.value);
+                if (!isNaN(val)) {
+                    if (val > 20) val = 20;
+                    if (val < 10) val = 10;
+                    consumptionSlider.value = val;
+                    calcularAutonomia();
+                    solicitarCalculoConsumo();
+                }
+            });
+        }
 
-
-        calcularAutonomia(); // Primera carga de números
+        calcularAutonomia();
     }
 
     // ==========================================
-    // 4. CARGA DE JSON Y SELECTOR DE VEHÍCULO
+    // 5. CÁLCULO DE CONSUMO, TARIFAS Y TÉRMICO
     // ==========================================
-    const selectVehiculo = document.getElementById('vehiculo-select');
-    const infoVehiculo = document.getElementById('vehiculo-info');
+    function formatearPesos(num) {
+        return `$ ${Number(num || 0).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
 
+    let timerConsumo = null;
+    function solicitarCalculoConsumo() {
+        if (!distanciaSlider || !baseHogarInput) return;
+        if (distanciaDisplay) distanciaDisplay.textContent = `${distanciaSlider.value} km`;
+
+        clearTimeout(timerConsumo);
+        timerConsumo = setTimeout(async () => {
+            const payload = {
+                baseHogarKwh: parseFloat(baseHogarInput.value) || 300,
+                distanciaMensualKm: parseFloat(distanciaSlider.value) || 50,
+                rendimientoEvKwh100: parseFloat(consumptionSlider ? consumptionSlider.value : 15),
+                proveedor: proveedorSelect ? proveedorSelect.value : 'EDENOR',
+                ivaPorc: parseFloat(ivaInput ? ivaInput.value : 21),
+                art34Porc: parseFloat(art34Input ? art34Input.value : 6.383),
+                otrosPorc: parseFloat(otrosInput ? otrosInput.value : 0),
+                factorPerdidaPorc: parseFloat(perdidaInput ? perdidaInput.value : 15),
+                costoLitroNafta: parseFloat(naftaPrecioInput ? naftaPrecioInput.value : 1350),
+                consumoLitros100km: parseFloat(naftaConsumoInput ? naftaConsumoInput.value : 8.5)
+            };
+
+            try {
+                const res = await fetch('/api/calcular-consumo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const resData = await res.json();
+
+                if (valFacturaBase) valFacturaBase.textContent = formatearPesos(resData.facturaHogarSinEv);
+                if (valCargaKwh) valCargaKwh.textContent = `${(resData.cargaEvKwh || 0).toFixed(1)} kWh`;
+                if (valFacturaTotal) valFacturaTotal.textContent = formatearPesos(resData.costoTotalFactura);
+                if (valCostoKmEv) valCostoKmEv.textContent = formatearPesos(resData.costoPorKmEv);
+                if (valCostoEvMensual) valCostoEvMensual.textContent = formatearPesos(resData.costoRealEvMensual);
+
+                if (valCostoTermicoMensual) valCostoTermicoMensual.textContent = formatearPesos(resData.costoTermicoMensual);
+                if (valCostoKmTermico) valCostoKmTermico.textContent = `${formatearPesos(resData.costoPorKmTermico)} / km`;
+                
+                if (valAhorroMensual) {
+                    const ahorro = resData.ahorroMensual;
+                    valAhorroMensual.textContent = ahorro >= 0 
+                        ? `Ahorro mensual con EV: ${formatearPesos(ahorro)}` 
+                        : `Costo extra vs nafta: ${formatearPesos(Math.abs(ahorro))}`;
+                }
+            } catch (err) {
+                console.error("Error al calcular consumo en backend:", err);
+            }
+        }, 100);
+    }
+
+    const inputsConsumo = [
+        baseHogarInput, distanciaSlider, proveedorSelect, ivaInput, 
+        art34Input, otrosInput, perdidaInput, naftaPrecioInput, naftaConsumoInput
+    ];
+    inputsConsumo.forEach(elem => {
+        if (elem) elem.addEventListener('input', solicitarCalculoConsumo);
+    });
+
+    solicitarCalculoConsumo();
+
+    // ==========================================
+    // 6. CARGA DE CATÁLOGO DE VEHÍCULOS
+    // ==========================================
     async function cargarVehiculos() {
         if (!selectVehiculo) return;
 
         try {
-            // Usamos ruta relativa por seguridad en servidores locales
-           // const response = await fetch('data/vehiculos.json'); 
             const response = await fetch('/data/vehiculos.json');
             const vehiculosDB = await response.json();
             
-            // Poblar el selector
             selectVehiculo.innerHTML = '';
             vehiculosDB.forEach(auto => {
                 const option = document.createElement('option');
@@ -157,35 +224,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 selectVehiculo.appendChild(option);
             });
 
-            // Escuchar cambios en la lista
             selectVehiculo.addEventListener('change', (e) => {
                 const seleccionado = vehiculosDB.find(v => v.id === e.target.value);
                 if (seleccionado) {
                     vehiculoActivo = seleccionado;
-                    
-                    // Actualizar textos en pantalla
-                    infoVehiculo.innerHTML = `
-                        <strong>Batería:</strong> ${vehiculoActivo.bateria_kwh} kWh <br>
-                        <strong>Autonomía Base WLTP:</strong> ${vehiculoActivo.autonomia_km} km
-                    `;
-                    evTitle.textContent = `${vehiculoActivo.marca} ${vehiculoActivo.modelo}`;
-                    evBadge.textContent = `${vehiculoActivo.bateria_kwh} kWh`;
-                    
-                    // Recalcular
+                    if (infoVehiculo) {
+                        infoVehiculo.innerHTML = `
+                            <strong>Batería:</strong> ${vehiculoActivo.bateria_kwh} kWh <br>
+                            <strong>Autonomía Base WLTP:</strong> ${vehiculoActivo.autonomia_km} km
+                        `;
+                    }
+                    if (evTitle) evTitle.textContent = `${vehiculoActivo.marca} ${vehiculoActivo.modelo}`;
+                    if (evBadge) evBadge.textContent = `${vehiculoActivo.bateria_kwh} kWh`;
                     calcularAutonomia();
                 }
             });
 
-            // Disparar la selección inicial del JSON
             selectVehiculo.dispatchEvent(new Event('change'));
-
         } catch (error) {
-            console.error("Error cargando vehiculos.json. Usando BYD Dolphin de respaldo.", error);
+            console.error("Error cargando vehiculos.json", error);
             selectVehiculo.innerHTML = '<option>Error al cargar catálogo</option>';
         }
     }
 
-    // Iniciar el fetch
     cargarVehiculos();
 
+    // ==========================================
+    // 7. TELEMETRÍA (PING SILENCIOSO)
+    // ==========================================
+    function registrarApertura() {
+        const esAppMovil = window.Capacitor !== undefined || window.location.protocol === 'capacitor:';
+        const origen = esAppMovil ? 'app-movil' : 'web';
+        const baseUrl = esAppMovil ? 'https://electrodrivear.com.ar' : '';
+
+        fetch(`${baseUrl}/api/ping?origen=${origen}`)
+            .then(res => res.json())
+            .then(data => console.log('Telemetría registrada:', data.status))
+            .catch(() => {});
+    }
+
+    registrarApertura();
 });

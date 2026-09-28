@@ -8,22 +8,20 @@
 </head>
 <body>
 
-    <!-- PORTADA / HERO -->
     <header class="hero-section">
         <div class="hero-content">
             <span class="badge-brand">⚡ ElectroDriveAR</span>
-            <h1 class="hero-title">Simulador de Autonomía Eléctrica</h1>
+            <h1 class="hero-title">Simulador & Costo de Movilidad</h1>
             <p class="hero-subtitle">
-                Calculá en tiempo real el rango de tu vehículo según nivel de carga, degradación de batería y rendimiento en ruta o ciudad.
+                Calculá autonomía en ruta y compará el costo eléctrico de recarga frente al combustible tradicional.
             </p>
         </div>
     </header>
 
-    <!-- CALCULADORA / SIMULADOR -->
     <section id="simulador-section" class="app-wrapper">
         <div id="app-container">
             
-            <!-- VISTA 1: SIMULADOR -->
+            <!-- VISTA 1: SIMULADOR DE AUTONOMÍA -->
             <main id="vista-simulador" class="view active">
                 <div class="ev-card">
                     <div class="ev-header">
@@ -31,7 +29,6 @@
                         <span id="ev-badge" class="badge">43.2 kWh</span>
                     </div>
 
-                    <!-- Slider SOC -->
                     <div class="slider-container">
                         <div class="slider-labels">
                             <label for="soc-slider">Nivel de Carga (SOC)</label>
@@ -40,7 +37,6 @@
                         <input type="range" id="soc-slider" class="electric-slider" min="5" max="100" value="100">
                     </div>
 
-                    <!-- Slider Antigüedad (Degradación) -->
                     <div class="slider-container">
                         <div class="slider-labels">
                             <label for="years-slider">Antigüedad de Batería</label>
@@ -49,7 +45,6 @@
                         <input type="range" id="years-slider" class="electric-slider" min="0" max="15" value="0" step="1">
                     </div>
 
-                    <!-- Slider y Entrada de Rendimiento -->
                     <div class="slider-container">
                         <div class="slider-labels">
                             <label for="consumption-slider">Rendimiento (kWh/100km)</label>
@@ -61,7 +56,6 @@
                         <input type="range" id="consumption-slider" class="electric-slider" min="10" max="20" step="0.1" value="13.5">
                     </div>
 
-                    <!-- Display de Resultados -->
                     <div class="result-container">
                         <div class="range-output" id="output-container">
                             <span id="range-value">380</span> <span class="unit">km</span>
@@ -72,51 +66,171 @@
             </main>
 
             <!-- VISTA 2: CONFIGURACIÓN DE VEHÍCULO -->
-            <main id="vista-configuracion" class="view">
+            <main id="vista-vehiculo" class="view">
                 <div class="ev-card tab-vehiculo">
-                    <h2>Ajustes de Vehículo</h2>
-                    <p class="text-muted">Seleccioná tu modelo para ajustar los cálculos de autonomía.</p>
-                    
+                    <h2>Catálogo de Vehículos</h2>
+                    <p class="text-muted">Seleccioná tu modelo para sincronizar los parámetros.</p>
                     <div class="input-group">
                         <select id="vehiculo-select" class="modern-select">
                             <option value="">Cargando catálogo...</option>
                         </select>
                     </div>
-
                     <div id="vehiculo-info" class="ev-specs"></div>
                 </div>
             </main>
 
-            <!-- NAVEGACIÓN INFERIOR -->
+            <!-- VISTA 3: MI CONSUMO & COMPARATIVA -->
+            <main id="vista-consumo" class="view">
+                <div class="ev-card">
+                    <h2>⚡ Mi Consumo Eléctrico</h2>
+                    
+                    <div class="calc-section-label">CONSUMO BASE (SIN EV)</div>
+                    <div class="field-row">
+                        <label for="base-hogar-input">Consumo Mensual del Hogar</label>
+                        <div class="input-inline">
+                            <input type="number" id="base-hogar-input" class="modern-num-input w-80" value="300">
+                            <span class="unit-sm">kWh</span>
+                        </div>
+                    </div>
+                    <p class="sub-caption">Ingresá el valor promedio de tu última factura.</p>
+
+                    <div class="calc-section-label">USO DEL VEHÍCULO</div>
+                    <div class="slider-container">
+                        <div class="slider-labels">
+                            <label for="distancia-slider">Distancia mensual</label>
+                            <span id="distancia-display" class="accent-green">50 km</span>
+                        </div>
+                        <input type="range" id="distancia-slider" class="electric-slider green-accent" min="50" max="4000" step="50" value="50">
+                    </div>
+
+                    <div class="calc-section-label">PROYECCIÓN DE FACTURACIÓN</div>
+                    <div class="stat-grid-2x2">
+                        <div class="stat-box">
+                            <span class="stat-title">FACTURA HOGAR (SIN EV)</span>
+                            <div class="stat-value" id="val-factura-base">$ 0,00</div>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-title">CARGA DEL EV</span>
+                            <div class="stat-value" id="val-carga-kwh">0 kWh</div>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-title">COSTO TOTAL FACTURA</span>
+                            <div class="stat-value" id="val-factura-total">$ 0,00</div>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-title">COSTO POR KM (EV)</span>
+                            <div class="stat-value text-cyan" id="val-costo-km-ev">$ 0,00</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight-card green-glow">
+                        <span class="highlight-title">COSTO REAL DEL EV (MENSUAL)</span>
+                        <div class="highlight-value text-green" id="val-costo-ev-mensual">$ 0,00</div>
+                        <span class="sub-caption">Diferencia entre la nueva factura y la base.</span>
+                    </div>
+
+                    <!-- COMPARATIVA CON VEHÍCULO TÉRMICO -->
+                    <div class="highlight-card thermal-box">
+                        <div class="slider-labels">
+                            <span class="highlight-title">COSTO VEHÍCULO TÉRMICO</span>
+                            <span class="badge-sm" id="val-costo-km-termico">$ 0,00 / km</span>
+                        </div>
+                        <div class="highlight-value text-amber" id="val-costo-termico-mensual">$ 0,00</div>
+                        <div class="ahorro-tag" id="val-ahorro-mensual">Ahorro mensual: $ 0,00</div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- VISTA 4: CONFIGURACIÓN CONSUMO ELÉCTRICO Y TÉRMICO -->
+            <main id="vista-config-consumo" class="view">
+                <div class="ev-card">
+                    <h2>⚙️ Configuración Tarifaria</h2>
+
+                    <div class="calc-section-label text-green-title">PARÁMETROS ELÉCTRICOS E IMPUESTOS</div>
+                    
+                    <div class="field-row">
+                        <label for="proveedor-select">Proveedor Eléctrico</label>
+                        <select id="proveedor-select" class="modern-select sm">
+                            <option value="EDENOR" selected>EDENOR</option>
+                            <option value="EDESUR">EDESUR</option>
+                        </select>
+                    </div>
+
+                    <div class="grid-3col">
+                        <div>
+                            <label class="lbl-sm">IVA (%)</label>
+                            <input type="number" id="iva-input" class="modern-num-input" value="21">
+                        </div>
+                        <div>
+                            <label class="lbl-sm">Art. 34 (%)</label>
+                            <input type="number" id="art34-input" class="modern-num-input" value="6.383" step="0.001">
+                        </div>
+                        <div>
+                            <label class="lbl-sm">Otros (%)</label>
+                            <input type="number" id="otros-input" class="modern-num-input" value="0">
+                        </div>
+                    </div>
+
+                    <div class="field-row mt-12">
+                        <label>Pérdida de Carga (AC -> DC %)</label>
+                        <input type="number" id="perdida-input" class="modern-num-input" value="15">
+                    </div>
+
+                    <div class="calc-section-label text-green-title">PARÁMETROS VEHÍCULO TÉRMICO</div>
+                    <div class="grid-2col">
+                        <div>
+                            <label class="lbl-sm">Litro Nafta ($)</label>
+                            <input type="number" id="nafta-precio-input" class="modern-num-input w-full" value="1350">
+                        </div>
+                        <div>
+                            <label class="lbl-sm">Consumo (L/100km)</label>
+                            <input type="number" id="nafta-consumo-input" class="modern-num-input w-full" value="8.5" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="calc-section-label text-green-title">CUADROS TARIFARIOS (PERÍODO 08/26)</div>
+                    <div class="table-responsive">
+                        <table class="tarifas-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">Cat.</th>
+                                    <th rowspan="2">Desde</th>
+                                    <th colspan="2" class="th-edenor">EDENOR</th>
+                                    <th colspan="2" class="th-edesur">EDESUR</th>
+                                </tr>
+                                <tr>
+                                    <th>Fijo ($)</th>
+                                    <th>Var ($)</th>
+                                    <th>Fijo ($)</th>
+                                    <th>Var ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>R1</td><td>0</td><td>1.741,12</td><td>158,001</td><td>1.703,22</td><td>157,371</td></tr>
+                                <tr><td>R2</td><td>151</td><td>3.713,54</td><td>158,636</td><td>3.575,10</td><td>157,925</td></tr>
+                                <tr><td>R3</td><td>401</td><td>12.194,46</td><td>170,373</td><td>11.702,44</td><td>169,686</td></tr>
+                                <tr><td>R4</td><td>501</td><td>19.508,39</td><td>174,193</td><td>19.083,66</td><td>173,662</td></tr>
+                                <tr><td>R5</td><td>601</td><td>41.118,15</td><td>174,479</td><td>41.262,24</td><td>185,718</td></tr>
+                                <tr><td>R6</td><td>701</td><td>64.134,51</td><td>189,796</td><td>62.612,83</td><td>202,079</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+
+            <!-- NAVEGACIÓN INFERIOR (4 SOLAPAS) -->
             <nav class="bottom-nav">
-                <button class="nav-btn active" data-target="vista-simulador">
-                    ⚡ Simulador
-                </button>
-                <button class="nav-btn" data-target="vista-configuracion">
-                    🚗 Vehículo
-                </button>
+                <button class="nav-btn active" data-target="vista-simulador">⚡ Rango</button>
+                <button class="nav-btn" data-target="vista-vehiculo">🚗 Auto</button>
+                <button class="nav-btn" data-target="vista-consumo">📊 Consumo</button>
+                <button class="nav-btn" data-target="vista-config-consumo">⚙️ Cuadros</button>
             </nav>
 
         </div>
     </section>
 
-    <!-- CARACTERÍSTICAS -->
-    <section class="features-section">
-        <div class="feature-card">
-            <div class="feature-icon">🔋</div>
-            <h3>Degradación Real</h3>
-            <p>Estimación del 1.5% de pérdida anual adaptada a celdas LFP y NMC modernas.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">⚙️</div>
-            <h3>Consumo Ajustable</h3>
-            <p>Ajustá el rendimiento exacto de tu auto entre 10 y 20 kWh/100 km.</p>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
     <footer class="footer-section">
-        <p>© 2026 ElectroDriveAR · Movilidad eléctrica en Argentina.</p>
+        <p>© 2026 ElectroDriveAR · Tarifas actualizadas según ENRE.</p>
     </footer>
 
     <script src="js/app.js"></script>
